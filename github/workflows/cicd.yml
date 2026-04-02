@@ -1,0 +1,9 @@
+name: CI/CD on github
+on: [push, pull_request]
+jobs:
+  build:
+    name: Build step
+    runs-on:[ubuntu-latest, windows-latest]
+    steps:
+      name: run example
+      run: echo "build step"
