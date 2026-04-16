@@ -1,0 +1,17 @@
+language: cpp
+
+os: linux
+dist: focal
+
+before_install:
+  - sudo apt-get install -y libgtest-dev libgmock-dev lcov
+
+script:
+  - cmake -H. -B_build -DBUILD_TESTS=ON
+  - cmake --build _build
+  - cmake --build _build --target test -- ARGS=--verbose
+
+after_success:
+  - lcov --capture --directory . --output-file coverage.info
+  - lcov --remove coverage.info '/usr/*' --output-file coverage.info
+  - bash <(curl -s https://coveralls.io/coveralls.io)
