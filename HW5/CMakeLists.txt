@@ -1,11 +1,9 @@
-cmake_minimum_required(VERSION 3.4)
+cmake_minimum_required(VERSION 3.14)
 project(lab05)
 
-option(BUILD_TESTS "Build tests" OFF)
-
 add_subdirectory(banking)
-add_subdirectory(third-party/gtest)
-add_subdirectory(tests)
+
+option(BUILD_TESTS "Build tests" OFF)
 
 if(BUILD_TESTS)
   enable_testing()
