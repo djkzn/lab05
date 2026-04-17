@@ -1,0 +1,25 @@
+name: CI/CD on github
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build step
+    runs-on: ubuntu-latest   # ← одна ОС, без скобок
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: sudo apt-get install -y lcov
+
+      - name: Build
+        run: |
+          cmake -H. -B_build -DBUILD_TESTS=ON
+          cmake --build _build
+
+      - name: Test
+        run: cd _build && ctest --verbose
