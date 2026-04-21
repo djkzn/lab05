@@ -160,7 +160,7 @@ TEST(AccountTest, UnlockAllowsLockAgain) {
 
 TEST(TransactionRealTest, SuccessfulTransferWithRealAccounts) {
     Account from(1, 1000);
-    Account to(2, 0);
+    Account to(2, 10);
     Transaction t;
     t.set_fee(1);
 
@@ -168,7 +168,7 @@ TEST(TransactionRealTest, SuccessfulTransferWithRealAccounts) {
 
     EXPECT_TRUE(result);
     EXPECT_EQ(from.GetBalance(), 1000);
-    EXPECT_EQ(to.GetBalance(), 199);
+    EXPECT_EQ(to.GetBalance(), 9);
 }
 
 TEST(TransactionRealTest, FailedTransferRollsBackCreditWithRealAccounts) {
