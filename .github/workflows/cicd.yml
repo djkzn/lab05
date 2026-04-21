@@ -4,19 +4,45 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: Build step
+    name: Build and Test with Coverage
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          submodules: recursive      # ← тащит third-party/gtest
+          submodules: recursive
 
-      - name: Build
+      - name: Install lcov
+        run: sudo apt-get install -y lcov
+
+      - name: Build with coverage flags
         run: |
-          cmake -H. -B_build -DBUILD_TESTS=ON
+          cmake -H. -B_build \
+            -DBUILD_TESTS=ON \
+            -DCMAKE_CXX_FLAGS="--coverage -fprofile-arcs -ftest-coverage" \
+            -DCMAKE_EXE_LINKER_FLAGS="--coverage"
           cmake --build _build
 
-      - name: Test
+      - name: Run tests
         run: cd _build && ctest --verbose
+
+      - name: Collect coverage
+        run: |
+          lcov --capture \
+               --directory _build \
+               --output-file coverage.info \
+               --ignore-errors mismatch
+          lcov --remove coverage.info \
+               '/usr/*' \
+               '*/third-party/*' \
+               '*/tests/*' \
+               --output-file coverage.info
+          lcov --list coverage.info
+
+      - name: Upload coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: coverage.info
+          format: lcov
